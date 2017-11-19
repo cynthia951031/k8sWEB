@@ -4,8 +4,7 @@ from config import config
 from flask_login import LoginManager
 
 login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
-login_manager.
+login_manager.login_view = 'user.login'
 db = SQLAlchemy()
 
 
@@ -24,11 +23,17 @@ def create_app(config_name):
 	db.init_app(app)
 	login_manager.init_app(app)
 
-	from .auth import auth as auth_blueprint
-	app.register_blueprint(auth_blueprint, url_prefix='/auth')
+	from .util import interface_blueprint
+	app.register_blueprint(interface_blueprint)
+
+	from .user import user as user_blueprint
+	app.register_blueprint(user_blueprint, url_prefix='/user')
 
 	from .dashboard import dashboard as dashboard_blueprint
 	app.register_blueprint(dashboard_blueprint, url_prefix='/dashboard')
+
+	from .main import main as main_blueprint
+	app.register_blueprint(main_blueprint)
 
 	with app.app_context():
 		db.create_all()

@@ -9,6 +9,7 @@ class LoginForm(FlaskForm):
     password = PasswordField(u'密码', validators=[DataRequired()])
     remember_me = BooleanField(u'记住我')
     submit = SubmitField(u'登录')
+    
 
 class RegisterForm(FlaskForm):
     user_name = StringField(u'用户名', validators=[DataRequired(), Length(1, 64)])

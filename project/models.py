@@ -4,7 +4,7 @@ import hashlib
 from flask import request, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-
+'''
 user_instance = db.Table('user_instance', 
 				db.Column(('user_id'), db.Integer, db.ForeignKey(user.id)),
 				db.Column(('instance_id'), db.Integer, db.ForeignKey(instance.id))
@@ -13,14 +13,14 @@ user_instance = db.Table('user_instance',
 app_instance = db.Table('app_instance',
 				db.Column(('app_id'), db.Integer, db.ForeignKey(app.id)),
 				db.Column(('instance_id'), db.Integer, db.ForeignKey(instance.id))
-				)
+				)'''
 
 class User(db.model):
 	__tabelname__ = 'user'
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(64), nullable = False)
 	password = db.Column(db.String(64), nullable = False)
-	instances = db.relationship('Instance', backref='author', lazy='dynamic')
+	#instances = db.relationship('Instance', backref='author', lazy='dynamic')
 
 	def __init__(self, **kwargs):
 		super(User, self).__init__(**kwargs)
@@ -60,7 +60,7 @@ class User(db.model):
 @login_manager.user_loader
 def load_user(user_id):
 	return User.query.get(int(user_id))
-
+'''
 class Instance(db.model):
 	__tabelname__ = 'instance'
 	id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -83,7 +83,7 @@ class Instance(db.model):
 class App(db.model):
 	__tabelname__ = 'app'
 	id = db.Column(db.Integer, primary_key=True, nullable=False)
-	name = db.Column(db.Integer, nullable=False)
+	name = db.Column(db.Integer, nullable=False)'''
 	
 
 
