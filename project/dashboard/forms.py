@@ -13,9 +13,8 @@ class CreateForm(FlaskForm):
 	insScale = IntegerField(u'实例规模', validators=[DataRequired()])
 	GPUnum = IntegerField(u'gpu数量', validators=[DataRequired()])
 	isSSD = BooleanField(u'是否使用SSD', validators=[DataRequired()])
-    #app_id = DecimalField(u'应用ID', validators=[DataRequired()])
-
-    submit = SubmitField(u'提交')
+	#app_id = DecimalField(u'应用ID', validators=[DataRequired()])
+	submit = SubmitField(u'提交')
 
 
 class UpdateForm(FlaskForm):

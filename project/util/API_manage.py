@@ -28,78 +28,74 @@ class ApiClient:
 				print 'login failed:' + r.text
 				return False
 
+
+	def open(self, url, data=None, method=None):
+		url = self.base_url + url
+		if method == 'POST' or method == 'post':
+			r = requests.post(url, data=data, cookies=self.login_cookie)
+			return dict(data=r.json(), status=r.status_code)
+		elif method == 'GET' or method == 'get':
+			r = requests.get(url, params=data, cookies=self.login_cookie)
+			return dict(data=r.json(), status=r.status_code)
+		elif method == 'DELETE' or method == 'delete':
+			r = requests.delete(url, data = data, cookies = self.login_cookie)
+			return dict(data=r.json(), status = r.status_code)
+		elif method == 'PUT' or method == 'put':
+			r = requests.put(url, data=data, cookies=self.login_cookie)
+			return dict(data=r.json(), status = r.status_code)
+		else:
+			return dict(message='method is invalide', status=400)
+		return
+
 	def get_login_cookie(self):
 		login_url = self.base_url + 'auth'
 		r = requests.post(login_url, data=self.login_data)
 		if r.status_code == 200:
 			return dict(kubernetes_token =r.cookies['kubernetes_token'])
 
-	def open(self, url, data=None, method=None):
-        """ 
-        收发请求的底层函数，执行此函数前需要手动登录。
-        将接收的字典格式数据data封装进请求，根据url参数发送到对应的api接口的地址，
-        并对返回的数据进行处理以及保存。
-        返回值为一个字典，即api接口返回的数据。
-        """
-        url = self.base_url + url
-        if method == 'POST' or method == 'post':
-            r = requests.post(url, data=data, cookies=self.login_cookie)
-            return dict(data=r.json(), status=r.status_code)
-        elif method == 'GET' or method == 'get':
-            r = requests.get(url, params=data, cookies=self.login_cookie)
-            return dict(data=r.json(), status=r.status_code)
-        elif method == 'DELETE' or method == 'delete':
-            r = requests.delete(url, data=data, cookies=self.login_cookie)
-            return dict(data=r.json(), status=r.status_code)
-        elif method == 'UPDATE' or method == 'update':
-        	r = requests.post(url, data=data, cookies = self.login_cookie)
-        	return dict(data=r.json(), status=r.status_code)
-        else:
-            return dict(message='method is invalid', status=400)
 
+	def create_spark(self, name, scale, cpu, memory, gpu, isSSD):
+		'''
+		创建一个spark实例 
+		'''
+		instance_name = name
+		aid = 1
+		param = "{\"scale\":%d,\"cpu\":%d,\"memory\":%d,\"gpu\":%d,\"isSSD\":%i}" % (scale, cpu*1000, memory, gpu, isSSD)
+		data = json.dumps(dict(instance_name=instance_name, aid=aid, param=param))
+		return self.open('instance', method='post', data=data)
 
-    def create_spark(self, name, nodes, cpu, memory, gpu, isSSD):
-        """
-        创建一个spark实例 
-        """
-        instancename = name
-        aid = 1
-        param = "{\"nodes\":%d,\"cpu\":%d,\"memory\":%d,\"gpu\":%d,\"isSSD\":%i}" % (nodes, cpu*1000, memory, gpu, isSSD)
-        data = json.dumps(dict(instancename=instancename, aid=aid, param=param))
-        return self.open('instance', method='post', data=data)
+	def delete_instance(self, iid):
+		'''
+		删除一个实例
+		'''
+		data = '{\"iid\":%d}' % iid
+		return self.open('instance/' + str(iid), method='delete', data=data)['status']
 
-    def delete_instance(self, iid):
-        """
-        删除一个实例
-        """
-        data = '{\"iid\":%s}' % iid
-        return self.open('instance', method='delete', data=data)['status']
+	def update_instance(self, iid, new_scale):
+		'''
+		更新一个实例
+		'''
+		param = '{\"iid\":%d,\"new_scale\":%d}' %(iid, new_scale)
+		data = json.dumps(dict(param=param))
+		return self.open('instance/' + str(iid), method='put', data = data)['status']
 
-    def update_instance(self, iid, new_scale):
-    	"""
-    	更新一个实例
-    	"""
-    	param = '{\"iid\":%s,\"new_scale\":%s}' %(iid, new_scale)
-    	data = json.dumps(dict(param=param))
-    	return self.open('instance', method='update', data = data)['status']
+	def get_instances_list(self):
+		'''
+		获取实例列表,参数kind为必须(all、single、proxy)
+		'''
+		data = dict(kind='all')
+		return self.open('instance/query', method='get', data=data)['data']
 
-    def get_instances_list(self):
-        """
-        获取实例列表,参数kind为必须(all、single、proxy)
-        """
-        data = dict(kind='all')
-        return self.open('instance', method='get', data=data)['data']
+	def get_instance_detail(self, iid):
+		'''
+		获取某个实例的详细信息，包括配置参数
+		'''
+		data = dict(kind='single', iid=iid)
+		return self.open('instance/' + str(iid), method='get', data=data)['data']
 
-    def get_instance_detail(self, iid):
-        """
-        获取某个实例的详细信息，包括配置参数
-        """
-        data = dict(kind='single', iid=iid)
-        return self.open('instance', method='get', data=data)['data']
-
-    def get_instance_proxy(self, iid):
-        """
-        获取某个实例的proxy代理链接
-        """
-        data = dict(kind='proxy', iid=iid)
-        return self.open('instance', method='get', data=data)['data']
+	def get_instance_proxy(self, iid):
+		'''
+		获取某个实例的proxy代理链接
+		'''
+		data = dict(kind='proxy', iid=iid)
+		return self.open('instance', method='get', data=data)['data']

@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flash import Blueprint
+from flask import Blueprint
 
 dashboard = Blueprint('dashboard', __name__)
 

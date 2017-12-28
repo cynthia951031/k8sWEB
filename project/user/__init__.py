@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import BluePrint
+from flask import Blueprint
 
-user = BluePrint('user', __name__)
+user = Blueprint('user', __name__)
 
 from . import routes

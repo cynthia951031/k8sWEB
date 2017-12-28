@@ -11,7 +11,10 @@ db = SQLAlchemy()
 def create_app(config_name):
 	app = Flask(__name__)
 	app.config.from_object(config[config_name])
-	config[config_name].init_app(app)
+
+	#config init 
+	#config[config_name].init_app(app)
+
 	'''if not app.config['DEBUG'] and not app.config_name['TESTING']:
 		import logging
 		from logging.handlers import SysLogHandler
@@ -35,7 +38,7 @@ def create_app(config_name):
 	from .main import main as main_blueprint
 	app.register_blueprint(main_blueprint)
 
-	with app.app_context():
-		db.create_all()
+	'''with app.app_context():
+		db.create_all()'''
 
 	return app

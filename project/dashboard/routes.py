@@ -1,21 +1,24 @@
 # encoding: utf-8
 from flask import render_template, flash, redirect, url_for, abort,\
-    request, current_app, g, jsonify
+	 request, current_app, g, jsonify
 from datetime import datetime
 from flask_login import login_required, current_user
 from .. import db
 from ..models import User
 from .forms import CreateForm, UpdateForm, DeleteForm, QueryForm
 from ..util.utils import get_login_data
+from . import dashboard
 
 
 @dashboard.route('/<int:userid>', methods=['GET', 'POST'])
 @login_required
 def home(userid):
-    api_client = ApiClient(login_data=get_login_data(current_user))
-    api_client.login()
-    data = api_client.get_instances_list()
-	return render_template('dashboard/home.html', userid=userid, instances=data['instances'], title=u'我的实例')
+	api_client = ApiClient(login_data=get_login_data(current_user))
+	api_client.login()
+	data = api_client.get_instances_list()
+	return render_template('dashboard/home.html', userid=userid,
+												instances=data['instances'],
+												title='my_instances')
 
 
 @dashboard.route('/detail/<int:iid>', methods=['GET', 'POST'])
@@ -33,7 +36,7 @@ def detail(iid):
 							config = config,
 							param = param,
 							proxy = proxy['Service'],
-							title = u'实例详情')
+							title = 'instance_details')
 
 @dashboard.route('/create', methods=['POST'])
 @login_required
@@ -42,12 +45,16 @@ def create():
 	if form.validate_on_submit():
 		api_client = ApiClient(login_data=get_login_data(current_user))
 		api_client.login()
-		r_status = api_client.create_spark(form.instance_name.data, form.CPUsize.data, form.MEMsize.data,
-								form.insScale.data, form.GPUnum.data, form.isSSD.data)
+		r_status = api_client.create_spark(name = form.instance_name.data, 
+											cpu = form.CPUsize.data, 
+											mem = form.MEMsize.data,
+											scale = form.insScale.data, 
+											gpu = form.GPUnum.data, 
+											isSSD = form.isSSD.data)
 		if r_status == 200:
 			flash('created')
 			return redirect(url_for('.home'))
-	return render_template('dashboard/create.html', title = u'创建实例')
+	return render_template('dashboard/create.html', title = 'create_instance')
 
 @dashboard.route('/update/<int:iid>', methods=['POST', 'GET'])
 @login_required
@@ -60,7 +67,7 @@ def update(iid):
 		if r_status == 200:
 			flash('updated')
 			return redirect(url_for('.home'))
-	return render_template('dashboard/update.html', title = u'更新实例')
+	return render_template('dashboard/update.html', title = 'update_instance')
 
 
 

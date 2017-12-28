@@ -15,7 +15,7 @@ app_instance = db.Table('app_instance',
 				db.Column(('instance_id'), db.Integer, db.ForeignKey(instance.id))
 				)'''
 
-class User(db.model):
+class User(db.Model):
 	__tabelname__ = 'user'
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(64), nullable = False)
@@ -26,8 +26,8 @@ class User(db.model):
 		super(User, self).__init__(**kwargs)
 		if self.avatar_hash is None and self.name is not None:
 			self.avatar_hash = hashlib.md5(self.name.encode('utf-8')).hexdigest()
-	
-	"""以下三个函数分别用于对用户密码进行读取保护、散列化以及验证密码"""
+		return
+
 	@property
 	def password(self):
 		raise AttributeError('password is not a readble attribute')
@@ -39,7 +39,7 @@ class User(db.model):
 	def verify_password(self, password):
 		return check_password_hash(self.password_hash, password)
 
-	"""以下两个函数用于token的生成和校验"""
+
 	def get_api_token(self, expiration=300):
 		s = Serializer(current_app.config['SECRET_KEY'], expiration)
 		return s.dumps({'user':self.id}).decode('utf-8')
