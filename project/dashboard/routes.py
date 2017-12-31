@@ -1,13 +1,14 @@
 # encoding: utf-8
-from flask import render_template, flash, redirect, url_for, abort,\
-	 request, current_app, g, jsonify
+from flask import render_template, flash, redirect, url_for, abort, request, current_app, g, jsonify
 from datetime import datetime
 from flask_login import login_required, current_user
 from .. import db
 from ..models import User
 from .forms import CreateForm, UpdateForm, DeleteForm, QueryForm
 from ..util.utils import get_login_data
+from ..util.API_manage import ApiClient
 from . import dashboard
+
 
 
 @dashboard.route('/<int:userid>', methods=['GET', 'POST'])
@@ -24,7 +25,8 @@ def home(userid):
 @dashboard.route('/detail/<int:iid>', methods=['GET', 'POST'])
 @login_required
 def detail(iid):
-	api_client = ApiClient(login_data=get_login_data(current_user))
+	api_client = \
+		ApiClient(login_data='{"name":"%s", "id":"%s"}' % (current_user.name, current_user.id))
 	api_client.login()
 	data = api_client.get_instance_detail(iid=iid)
 	instance = data['instance']

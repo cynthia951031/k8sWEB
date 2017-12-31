@@ -11,5 +11,5 @@ import string
 
 def get_login_data(user):
     """得到该用户的登录数据"""
-    return '{"username":"%s","password":"%s"}' % (user.username, user.api_password)
+    return '{"username":"%s"}' % (user.name)
 

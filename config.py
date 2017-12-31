@@ -11,9 +11,6 @@ config.py、APP/init.py 以及 manage.py 之间的关系：
 3. manage.py 是创建以及运行app的一个通用脚本，该文件使用了 APP/init.py
 """
 
-import os
-basedir = os.path.abspath(os.path.dirname(__file__))
-
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -22,21 +19,16 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 't0p s3cr3t'
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:123456@127.0.0.1:3306/k8sWEB"
-
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///'
 
 class TestingConfig(Config):
     TESTING = True
     SECRET_KEY = 'secret'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///'
 
 
 class ProductionConfig(Config):
-    DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///'
 
 
 config = {
