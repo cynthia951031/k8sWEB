@@ -18,14 +18,22 @@
       <div class="container">
         <!-- 导航栏logo -->
         <div class="navbar-header">
-          <a href="/">
+          <a>
             <img src="{{url_for("static",filename="img/s_logo.png")}}" class="navbar-brand"  width="auto" height="30" alt="">
           </a>
         </div>
         <!-- 导航栏左链接 -->
+        {% if userid %}
         <div class="nav navbar-nav">
-          <li><a href="/home">个人中心</a></li>
+          <li><a href={{url_for("dashboard.home",userid=userid)}}>个人中心</a></li>
         </div>
+        <div class="nav navbar-nav">
+          <li><a href={{url_for("dashboard.create")}}>创建任务</a></li>
+        </div>
+        <div class="nav navbar-nav navbar-right">
+          <li><a href="/user/logout">登出</a></li>
+        </div>
+        {% endif %}
   </header>
   {% with messages = get_flashed_messages() %} {% if messages %}
   <ul class=flashes>

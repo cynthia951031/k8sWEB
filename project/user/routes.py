@@ -14,18 +14,18 @@ def login():
 
     if form.validate_on_submit():
         # print str(form.user_id.data)
-        print type(form.user_id.data)
-        user = User.query.filter_by(id=form.user_id.data).first()
+        print type(str(form.name.data))
+        user = User.query.filter_by(name=str(form.name.data)).first()
         # 验证表单，如果正确重定向到dashboard
         if user is None:
-            flash(u'用户ID不存在')
+            flash(u'用户不存在')
             return redirect(url_for('.login'))
         elif not user.verify_password(form.password.data):
             flash(u'用户密码错误')
             return redirect(url_for('.login'))
         print "用户登录成功"
         login_user(user, form.remember_me.data)
-        return url_for('dashboard.home', userid=user.id)
+        return redirect(url_for('dashboard.home', userid=user.id))
     return render_template('user/login.html', form = form)
 
 
@@ -39,12 +39,12 @@ def register():
             flash(u'两次输入密码不一致')
             return redirect(url_for('.register'))
         else:
-            user = User(name=form.user_name.data, password=form.password.data)
+            user = User(name=form.name.data, password=form.password.data)
             flash('user_id:' + str(user.id))
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            return redirect(url_for('dashboard.home', userid = user.id))
+            return redirect(url_for('user.login'))
     return render_template('user/register.html', form = form)
 
 

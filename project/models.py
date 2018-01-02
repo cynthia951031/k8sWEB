@@ -11,10 +11,12 @@ class User(UserMixin, db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(64), nullable = False)
 	password = db.Column(db.String(64), nullable = False)
+	def __init__(self, name=None, password=None):
+		self.name = name
+		self.password = password
 
-	def __init__(self, **kwargs):
-		super(User, self).__init__(**kwargs)
-
+	def __repr__(self):
+		return '<User %r>' % (self.name)
 	def verify_password(self, password):
 		return True
 

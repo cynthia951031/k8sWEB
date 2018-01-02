@@ -5,3 +5,6 @@
 # Virtual environment
 /env*
 /venv
+
+# SQLite database file
+*.db

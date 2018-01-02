@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 from . import main
-from flask import render_template, jsonify
+from flask import render_template, jsonify,redirect,url_for
 from flask_login import login_required, current_user
 from ..util.API_manage import API_URL
 

@@ -6,9 +6,8 @@ from flask_bootstrap import Bootstrap
 
 login_manager = LoginManager()
 login_manager.login_view = 'user.login'
-db = SQLAlchemy()
 Bootstrap = Bootstrap()
-
+db = SQLAlchemy()
 def create_app(config_name):
 	app = Flask(__name__, static_url_path='/static')
 	app.config.from_object(config[config_name])
@@ -28,7 +27,7 @@ def create_app(config_name):
 
 	from .main import main as main_blueprint
 	app.register_blueprint(main_blueprint)
-	
+
 	with app.app_context():
 		db.create_all()
 
