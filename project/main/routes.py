@@ -12,14 +12,14 @@ def index():
 
 @main.app_errorhandler(404)
 def page_404(err):
-    return render_template('404.html', title='404'), 404
+    return render_template('main/404.html', title='404'), 404
 
 
 @main.app_errorhandler(403)
 def page_403(err):
-    return render_template('403.html', title='403'), 403
+    return render_template('main/403.html', title='403'), 403
 
 
 @main.app_errorhandler(500)
 def page_500(err):
-    return render_template('500.html', title='500'), 500
+    return render_template('main/500.html', title='500'), 500

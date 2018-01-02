@@ -13,12 +13,17 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        print str(form.user_id.data)
+        # print str(form.user_id.data)
+        print type(form.user_id.data)
         user = User.query.filter_by(id=form.user_id.data).first()
         # 验证表单，如果正确重定向到dashboard
-        if user is None or not user.verify_password(form.password.data):
-           flash(u'用户ID或密码错误')
-           return redirect(url_for('.login'))
+        if user is None:
+            flash(u'用户ID不存在')
+            return redirect(url_for('.login'))
+        elif not user.verify_password(form.password.data):
+            flash(u'用户密码错误')
+            return redirect(url_for('.login'))
+        print "用户登录成功"
         login_user(user, form.remember_me.data)
         return url_for('dashboard.home', userid=user.id)
     return render_template('user/login.html', form = form)
@@ -49,4 +54,3 @@ def logout():
     logout_user()
     flash(u'您已退出登录')
     return redirect(url_for('.login'))
-
