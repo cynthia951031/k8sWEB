@@ -18,11 +18,12 @@ def home(userid):
 	api_client = ApiClient(login_data=login_data)
 	api_client.login()
 	data = api_client.get_instances_list()
-	#ins_list type: 'dict' in 'list'
-	ins_list = [dict(name = ins.name, id = ins.id, is_deleted = ins.is_deleted, update_time = ins.update_time)\
-				 for ins in json.loads(data)['ins_list']]
+	#note: ins_list type: 'dict' in 'list'
+	ins_list = [dict(name = ins.name, id = ins.id, is_deleted = ins.is_deleted,\
+					 update_time = ins.update_time)\
+				 	 for ins in json.loads(data)['ins_list']]
 
-	return render_template('dashboard/home.html', 
+	return render_template('dashboard/home.html',
 							userid=userid,
 							ins_list = ins_list)
 
@@ -48,11 +49,11 @@ def create():
 		api_client = ApiClient(login_data=login_data)
 		api_client.login()
 		r_status = api_client.create_instance(name = form.instance_name.data, 
-											cpu = form.CPUsize.data, 
-											mem = form.MEMsize.data,
-											scale = form.insScale.data, 
-											gpu = form.GPUnum.data, 
-											isSSD = form.isSSD.data)
+											  cpu = form.CPUsize.data, 
+											  mem = form.MEMsize.data,
+											  scale = form.insScale.data, 
+											  gpu = form.GPUnum.data, 
+											  isSSD = form.isSSD.data)
 		if r_status == 200:
 			flash('created')
 			return redirect(url_for('.home'))
