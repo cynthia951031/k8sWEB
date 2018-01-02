@@ -13,7 +13,7 @@ config.py、APP/init.py 以及 manage.py 之间的关系：
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = 'secret'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 

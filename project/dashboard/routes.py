@@ -8,46 +8,46 @@ from .forms import CreateForm, UpdateForm, DeleteForm, QueryForm
 from ..util.utils import get_login_data
 from ..util.API_manage import ApiClient
 from . import dashboard
-
+import json
 
 
 @dashboard.route('/<int:userid>', methods=['GET', 'POST'])
 @login_required
 def home(userid):
-	api_client = ApiClient(login_data=get_login_data(current_user))
+	login_data = dict(name = current_user.name, id = current_user.id)
+	api_client = ApiClient(login_data=login_data)
 	api_client.login()
 	data = api_client.get_instances_list()
-	return render_template('dashboard/home.html', userid=userid,
-												instances=data['instances'],
-												title='my_instances')
+	#ins_list type: 'dict' in 'list'
+	ins_list = [dict(name = ins.name, id = ins.id, is_deleted = ins.is_deleted, update_time = ins.update_time)\
+				 for ins in json.loads(data)['ins_list']]
 
+	return render_template('dashboard/home.html', 
+							userid=userid,
+							ins_list = ins_list)
 
 @dashboard.route('/detail/<int:iid>', methods=['GET', 'POST'])
 @login_required
 def detail(iid):
-	api_client = \
-		ApiClient(login_data='{"name":"%s", "id":"%s"}' % (current_user.name, current_user.id))
+	login_data = dict(name = current_user.name, id = current_user.id)
+	api_client = ApiClient(login_data=login_data)
 	api_client.login()
 	data = api_client.get_instance_detail(iid=iid)
-	instance = data['instance']
-	config = data['config'][0]
-	param = json.loads(data['config'][0]['param'])
-	proxy = api_client.get_instance_proxy(iid = iid)
+	#具体返回参数看 k8sAPI！！！
+	#交给前端解析，注意区分 id 和 uid，实际上用户查询更新删除依赖的是 id 而非 uid
+	param = json.loads(data) # 应该是dict
 	return render_template("dashboard/instance/detail.html",
-							instance = instance, 
-							config = config,
-							param = param,
-							proxy = proxy['Service'],
-							title = 'instance_details')
+							param = param)
 
 @dashboard.route('/create', methods=['POST'])
 @login_required
 def create():
 	form = CreateForm()
 	if form.validate_on_submit():
-		api_client = ApiClient(login_data=get_login_data(current_user))
+		login_data = dict(name = current_user.name, id = current_user.id)
+		api_client = ApiClient(login_data=login_data)
 		api_client.login()
-		r_status = api_client.create_spark(name = form.instance_name.data, 
+		r_status = api_client.create_instance(name = form.instance_name.data, 
 											cpu = form.CPUsize.data, 
 											mem = form.MEMsize.data,
 											scale = form.insScale.data, 
@@ -56,20 +56,38 @@ def create():
 		if r_status == 200:
 			flash('created')
 			return redirect(url_for('.home'))
-	return render_template('dashboard/create.html', title = 'create_instance')
+	return render_template('dashboard/create.html', form=form)
 
 @dashboard.route('/update/<int:iid>', methods=['POST', 'GET'])
 @login_required
 def update(iid):
 	form = UpdateForm()
 	if form.validate_on_submit():
-		api_client = ApiClient(login_data=get_login_data(current_user))
+		login_data = dict(name = current_user.name, id = current_user.id)
+		api_client = ApiClient(login_data=login_data)
 		api_client.login()
 		r_status = api_client.update_instance(iid=iid, new_scale = form.new_scale.data)
 		if r_status == 200:
 			flash('updated')
 			return redirect(url_for('.home'))
-	return render_template('dashboard/update.html', title = 'update_instance')
+	return render_template('dashboard/update.html', form=form)
+
+@dashboard.route('/delete/<int:iid>', methods=['POST', 'GET'])
+@login_required
+def delete(iid):
+	form = DeleteForm()
+	if form.validate_on_submit():
+		login_data = dict(name = current_user.name, id = current_user.id)
+		api_client = ApiClient(login_data=login_data)
+		api_client.login()
+		r_status = api_client.delete_instance(iid=iid)
+		if r_status == 200:
+			flash('deleted')
+			return redirect(url_for('.home'))
+	return render_template('dashboard/delete.html', form=form)
+
+
+
 
 
 

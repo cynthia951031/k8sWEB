@@ -9,6 +9,7 @@ from .forms import LoginForm, RegisterForm
 
 @user.route('/login', methods=['GET', 'POST'])
 def login():
+
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -21,6 +22,7 @@ def login():
         login_user(user, form.remember_me.data)
         return url_for('dashboard.home', userid=user.id)
     return render_template('user/login.html', form = form)
+
 
 @user.route('/register', methods=['GET', 'POST'])
 def register():
