@@ -1,0 +1,7 @@
+# Python
+*.so
+*.pyc
+
+# Virtual environment
+/env*
+/venv
