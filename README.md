@@ -1,1 +1,1 @@
-超算实习k8sAPI 开发 web 端instance detail 包括：    id    name    cpu    memory    gpu #这个不太清楚在哪里创建自然也不知道怎么查询    service ip    isSSD    create time    deletion time    update time    service ports
+超算实习k8sAPI 开发 web 端instance detail 包括：	id	name	cpu	memory	gpu #这个不太清楚在哪里创建自然也不知道怎么查询	service ip	isSSD	create time	deletion time	update time	service ports
