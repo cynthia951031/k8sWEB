@@ -11,7 +11,7 @@ from .forms import LoginForm, RegisterForm
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(id=form.user_id.data).first()
+        user = User.query.filter_by(name=form.name.data).first()
         if user is None or not user.password == form.password.data:
             flash(u'用户ID或密码错误')
             return redirect(url_for('.login'))
@@ -28,10 +28,9 @@ def register():
             flash(u'两次输入密码不一致')
             return redirect(url_for('.register'))
         else:
-            user = User(name=form.user_name.data, password=form.password.data)
+            user = User(name=form.name.data, password=form.password.data)
             db.session.add(user)
             db.session.commit()
-            flash('ID: ' + str(user.id) + "   Please remember it!!! you need to login with it!!!")
             login_user(user)
             return redirect(url_for('dashboard.home', userid = user.id))
     return render_template('user/register.html', form = form)
