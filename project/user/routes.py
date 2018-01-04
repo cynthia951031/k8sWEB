@@ -9,9 +9,7 @@ from .forms import LoginForm, RegisterForm
 
 @user.route('/login', methods=['GET', 'POST'])
 def login():
-
     form = LoginForm()
-
     if form.validate_on_submit():
         # print str(form.user_id.data)
         print type(str(form.name.data))
@@ -31,16 +29,13 @@ def login():
 
 @user.route('/register', methods=['GET', 'POST'])
 def register():
-    # 创建表单
     form = RegisterForm()
-    # 提交注册
     if form.validate_on_submit():
         if form.password.data != form.password_confirm.data:
             flash(u'两次输入密码不一致')
             return redirect(url_for('.register'))
         else:
             user = User(name=form.name.data, password=form.password.data)
-            flash('user_id:' + str(user.id))
             db.session.add(user)
             db.session.commit()
             login_user(user)

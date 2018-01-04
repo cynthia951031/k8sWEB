@@ -5,11 +5,9 @@ from flask_login import login_required, current_user
 from .. import db
 from ..models import User
 from .forms import CreateForm, UpdateForm, DeleteForm, QueryForm
-from ..util.utils import get_login_data
 from ..util.API_manage import ApiClient
 from . import dashboard
 import json
-
 
 @dashboard.route('/home/<int:userid>', methods=['GET', 'POST'])
 @login_required
@@ -57,6 +55,7 @@ def detail(iid):
 
 	return render_template("dashboard/detail.html",
 							userid = current_user.id,iid = iid,data = data)
+
 
 @dashboard.route('/create', methods=['GET','POST'])
 @login_required
