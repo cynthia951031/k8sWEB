@@ -11,19 +11,15 @@ class User(UserMixin, db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(64), nullable = False)
 	password = db.Column(db.String(64), nullable = False)
-	avatar_hash = db.Column(db.String(64))
+	def __init__(self, name=None, password=None):
+		self.name = name
+		self.password = password
 
+	def __repr__(self):
+		return '<User %r>' % (self.name)
+	def verify_password(self, password):
+		return True
 
 @login_manager.user_loader
 def load_user(user_id):
 	return User.query.get(int(user_id))
-
-	
-
-
-
-
-
-
-
-	

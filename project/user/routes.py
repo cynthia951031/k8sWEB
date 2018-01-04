@@ -11,10 +11,17 @@ from .forms import LoginForm, RegisterForm
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(name=form.name.data).first()
-        if user is None or not user.password == form.password.data:
-            flash(u'用户ID或密码错误')
+        # print str(form.user_id.data)
+        print type(str(form.name.data))
+        user = User.query.filter_by(name=str(form.name.data)).first()
+        # 验证表单，如果正确重定向到dashboard
+        if user is None:
+            flash(u'用户不存在')
             return redirect(url_for('.login'))
+        elif not user.verify_password(form.password.data):
+            flash(u'用户密码错误')
+            return redirect(url_for('.login'))
+        print "用户登录成功"
         login_user(user, form.remember_me.data)
         return redirect(url_for('dashboard.home', userid=user.id))
     return render_template('user/login.html', form = form)
@@ -32,7 +39,7 @@ def register():
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            return redirect(url_for('dashboard.home', userid = user.id))
+            return redirect(url_for('user.login'))
     return render_template('user/register.html', form = form)
 
 
@@ -42,4 +49,3 @@ def logout():
     logout_user()
     flash(u'您已退出登录')
     return redirect(url_for('.login'))
-
