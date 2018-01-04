@@ -3,6 +3,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 <div class="container">
   <div class="raw">
+    <h2>Home <small>当前用户ID：{{userid}}</small></h1>
     <div class="col-md-6 col-md-offset-3">
       {{ wtf.quick_form(form) }}
     </div>
